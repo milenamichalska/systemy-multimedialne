@@ -3,7 +3,6 @@ import cv2
 from os import listdir
 from os.path import isfile, join
 
-from skimage import data, img_as_float
 from skimage.metrics import structural_similarity as ssim
 
 def mse(img1, img2):
@@ -12,6 +11,29 @@ def mse(img1, img2):
    err = np.sum(diff**2)
    mse = err/(float(h*w))
    return mse
+
+def PSNR(img1, img2):
+    mse_h = mse(img1, img2)
+    if(mse_h == 0):
+        return 100
+    max_pixel = 255.0
+    psnr = 10 * np.log10(max_pixel**2 / mse_h)
+    return psnr
+
+def IF(img1, img2):
+    m = img1.shape[0]
+    n = img1.shape[1]
+    sum_a = 0
+    sum_b = 0
+
+    for i in range(m - 1):
+        for j in range(n - 1):
+            a = np.int16(img1[i][j])
+            b = np.int16(img2[i][j])
+            sum_a += (a - b) ** 2
+            sum_b += a * b
+
+    return 1 - (sum_a / sum_b)
 
 all_imgs = [[], [], []]
 
@@ -39,8 +61,19 @@ for i, container in enumerate(all_imgs):
     for img in container:
         mse_matrix[i].append(mse(raw_images[i], img))
 
+PSNR_matrix = [[], [], []]
+for i, container in enumerate(all_imgs):
+    for img in container:
+        PSNR_matrix[i].append(PSNR(raw_images[i], img))
+
+IF_matrix = [[], [], []]
+for i, container in enumerate(all_imgs):
+    for img in container:
+        IF_matrix[i].append(IF(raw_images[i], img))
+
+print(IF_matrix)
+
 ssim_matrix = [[], [], []]
 for i, container in enumerate(all_imgs):
     for img in container:
         ssim_matrix[i].append(ssim(raw_images[i], img))
-print(ssim_matrix)
