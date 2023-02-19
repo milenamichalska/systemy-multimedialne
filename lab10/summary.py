@@ -1,6 +1,4 @@
 import matplotlib
-
-from compare_images import PSNR_matrix
 matplotlib.use('tkagg')
 
 import numpy as np
@@ -64,8 +62,6 @@ def draw_plots(df):
 
         ids = [*np.arange(0, len(regression_data)/9, 1/9)]
         # ids = [*np.arange(0, len(regression_data)/30, 1/30)]
-        print(len(regression_data))
-        print(len(ids))
         m, b = np.polyfit(ids, regression_data, 1)
         plt.plot(ids, [float(x) * m + b for x in ids])
 
@@ -139,8 +135,6 @@ if_matrix = normalize(if_matrix, axis=1, norm='l1').flatten()
 xyz1 = pd.DataFrame({'mos': mos_matrix[:9], 'mse': mse_matrix[:9], 'psnr': psnr_matrix[:9], 'if': if_matrix[:9], 'ssim': ssim_matrix[:9]})
 xyz2 = pd.DataFrame({'mos': mos_matrix[9:18], 'mse': mse_matrix[9:18], 'psnr': psnr_matrix[9:18], 'if': if_matrix[9:18], 'ssim': ssim_matrix[9:18]})
 xyz3 = pd.DataFrame({'mos': mos_matrix[18:], 'mse': mse_matrix[18:],'psnr': psnr_matrix[18:], 'if': if_matrix[18:], 'ssim': ssim_matrix[18:]})
-
-print(xyz1.corr().shape)
 
 for xyz in [xyz1, xyz2, xyz3]:
     # corr_matrix = np.corrcoef(xyz).round(decimals=2)
